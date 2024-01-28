@@ -28,3 +28,18 @@ class Cell:
 
     def draw_move(self, to_cell, undo=False):
         self.__win.draw_line(Line(self.center(), to_cell.center()))
+
+
+class Maze:
+    def __init__(self, x, y, num_rows, num_columns, cell_size, win):
+        self._x = x
+        self._y = y
+        self._num_rows = num_rows
+        self._num_columns = num_columns
+        self._cell_size = cell_size
+        self._win = win
+        self._create_cells()
+
+        def _create_cells():
+            self._cells = []
+            
