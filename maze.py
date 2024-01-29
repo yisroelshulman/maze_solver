@@ -23,9 +23,9 @@ class Maze:
             self._cells.append(row)
         for i in range(self._num_rows):
             for j in range(self._num_columns):
-                self._draw_cell(self._cells[i][j], i, j)
+                self._draw_cell(i, j)
 
-    def _draw_cell(self, cell, i, j):
+    def _draw_cell(self, i, j):
         x1 = j * self._cell_size + self._x
         x2 = (j + 1) * self._cell_size + self._x
         y1 = i * self._cell_size + self._y

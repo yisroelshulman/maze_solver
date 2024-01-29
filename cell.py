@@ -34,4 +34,7 @@ class Cell:
         return Point((self._x1 + self._x2) / 2, (self._y1 + self._y2) / 2)
 
     def draw_move(self, to_cell, undo=False):
-        self._win.draw_line(Line(self.center(), to_cell.center()))
+        color = "red"
+        if undo:
+            color = "gray"
+        self._win.draw_line(Line(self.center(), to_cell.center()), color)
