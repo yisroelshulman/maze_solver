@@ -10,6 +10,7 @@ class Cell:
         self.has_right_wall = True
         self.has_top_wall = True
         self.has_bottom_wall = True
+        self.visited = False
         self._win = win
 
     def draw_walls(self, x1, y1, x2 , y2):
