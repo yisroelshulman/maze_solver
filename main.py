@@ -4,7 +4,7 @@ import time
 
 def main():
     test = Window(800, 600)
-    maze = Maze(5, 5, 20, 20, 20, test, 0)
+    maze = Maze(5, 5, 25, 25, 20, test, 0)
     
     test.wait_for_close()
 
