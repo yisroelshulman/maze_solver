@@ -7,6 +7,7 @@ def main():
     maze = Maze(5, 5, 10, 30, 15, test)
     time.sleep(1)
     maze._cells[9][10].draw_move(maze._cells[8][10])
+    maze._break_entrance_and_exit()
     test.wait_for_close()
 
 main()

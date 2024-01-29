@@ -19,18 +19,30 @@ class Cell:
         self._x2 = x2
         self._y1 = y1
         self._y2 = y2
+        top_left = Point(x1, y1)
+        top_right = Point(x2, y1)
+        bottom_left = Point(x1, y2)
+        bottom_right = Point(x2, y2)
+        left_wall = Line(top_left, bottom_left)
+        right_wall = Line(top_right, bottom_right)
+        top_wall = Line(top_left, top_right)
+        bottom_wall = Line(bottom_left, bottom_right)
         if self.has_left_wall:
-            left_wall = Line(Point(x1, y1), Point(x1, y2))
             self._win.draw_line(left_wall)
+        else:
+            self._win.draw_line(left_wall, "#d9d9d9")
         if self.has_right_wall:
-            right_wall = Line(Point(x2, y1), Point(x2, y2))
             self._win.draw_line(right_wall)
+        else:
+            self._win.draw_line(right_wall, "#d9d9d9")
         if self.has_top_wall:
-            top_wall = Line(Point(x1, y2), Point(x2, y2))
             self._win.draw_line(top_wall)
+        else:
+            self._win.draw_line(top_wall, "#d9d9d9")
         if self.has_bottom_wall:
-            bottom_wall = Line(Point(x1, y1), Point(x2, y1))
             self._win.draw_line(bottom_wall)
+        else:
+            self._win.draw_line(bottom_wall, "#d9d9d9")
 
     def center(self):
         return Point((self._x1 + self._x2) / 2, (self._y1 + self._y2) / 2)
