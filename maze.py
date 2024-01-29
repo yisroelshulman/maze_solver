@@ -16,17 +16,21 @@ class Maze:
 
     def _create_cells(self):
         self._cells = []
-        for i in range(self._num_columns):
+        for i in range(self._num_rows):
             row = []
-            for j in range(self._num_rows):
-                row.append(Cell(j * self._cell_size + self._y, (j + 1) * self._cell_size + self._y, i * self._cell_size + self._x, (i + 1) * self._cell_size + self._x, self._win))
+            for j in range(self._num_columns):
+                row.append(Cell(self._win))
             self._cells.append(row)
-        for row in self._cells:
-            for cell in row:
-                self._draw_cell(cell)
+        for i in range(self._num_rows):
+            for j in range(self._num_columns):
+                self._draw_cell(self._cells[i][j], i, j)
 
-    def _draw_cell(self, cell):
-        cell.draw_walls()
+    def _draw_cell(self, cell, i, j):
+        x1 = j * self._cell_size + self._x
+        x2 = (j + 1) * self._cell_size + self._x
+        y1 = i * self._cell_size + self._y
+        y2 = (i + 1) * self._cell_size + self._y
+        self._cells[i][j].draw_walls(x1, y1, x2, y2)
         self._animate()
 
     def _animate(self):
