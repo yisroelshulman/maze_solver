@@ -19,11 +19,11 @@ class Window:
         self.__width = width
         self.__height = height
         self.__root = Tk()
-        self.__root.title("Maze Solver")
+        self.__root.title('Maze Solver')
         self.__canvas = Canvas(self.__root, height=self.__height, width=self.__width)
         self.__canvas.pack(fill=BOTH, expand=1)
         self.__running = False
-        self.__root.protocol("WM_DELETE_WINDOW", self.close)
+        self.__root.protocol('WM_DELETE_WINDOW', self.close)
 
     def redraw(self) -> None:
         self.__root.update_idletasks()
@@ -33,10 +33,10 @@ class Window:
         self.__running = True
         while self.__running:
             self.redraw()
-        print("closing window")
+        print('closing window')
 
     def close(self) -> None:
         self.__running = False
 
-    def draw_line(self, line: Line, fill_color="black") -> None:
+    def draw_line(self, line: Line, fill_color='black') -> None:
         line.draw(self.__canvas, fill_color)
