@@ -56,13 +56,13 @@ class Maze:
         while True:
             visitable = []
             if i - 1 >= 0 and not self._cells[i - 1][j].visited:
-                visitable.append('up') #, self._cells[i - 1][j])
+                visitable.append('up')
             if j - 1 >= 0 and not self._cells[i][j - 1].visited:
-                visitable.append('left') #, self._cells[i][j - 1])
+                visitable.append('left')
             if i + 1 < len(self._cells) and not self._cells[i + 1][j].visited:
-                visitable.append('down') #, self._cells[i + 1][j])
+                visitable.append('down')
             if j + 1 <  len(self._cells[0]) and not self._cells[i][j + 1].visited:
-                visitable.append('right') #, self._cells[i][j + 1])
+                visitable.append('right')
             if len(visitable) == 0:
                 self._draw_cell(i, j)
                 return
@@ -88,3 +88,50 @@ class Maze:
         for i in range(self._num_rows):
             for j in range(self._num_columns):
                 self._cells[i][j].visited = False
+
+    def _solve(self):
+        random.seed(None)
+        return self._solve_r(0, 0)
+
+    def _solve_r(self, i, j):
+        self._animate()
+        self._cells[i][j].visited = True
+        if i == (self._num_rows - 1) and j == (self._num_columns - 1):
+            return True
+        while True:
+            visitable = []
+            if i - 1 >= 0 and not self._cells[i - 1][j].visited and not self._cells[i][j].has_top_wall:
+                visitable.append('up')
+            if j - 1 >= 0 and not self._cells[i][j - 1].visited and not self._cells[i][j].has_left_wall:
+                visitable.append('left')
+            if i + 1 < len(self._cells) and not self._cells[i + 1][j].visited and not self._cells[i][j].has_bottom_wall:
+                visitable.append('down')
+            if j + 1 <  len(self._cells[0]) and not self._cells[i][j + 1].visited and not self._cells[i][j].has_right_wall:
+                visitable.append('right')
+            if len(visitable) == 0:
+                return False
+            rand = random.randrange(0, len(visitable))
+            if visitable[rand] == 'up':
+                self._cells[i][j].draw_move(self._cells[i - 1][j])
+                if not self._solve_r(i - 1, j):
+                    self._cells[i][j].draw_move(self._cells[i - 1][j], True)
+                else:
+                    return True
+            elif visitable[rand] == 'left':
+                self._cells[i][j].draw_move(self._cells[i][j - 1])
+                if not self._solve_r(i, j - 1):
+                    self._cells[i][j].draw_move(self._cells[i][j - 1], True)
+                else:
+                    return True
+            elif visitable[rand] == 'down':
+                self._cells[i][j].draw_move(self._cells[i + 1][j])
+                if not self._solve_r(i + 1, j):
+                    self._cells[i][j].draw_move(self._cells[i + 1][j], True)
+                else:
+                    return True
+            else:
+                self._cells[i][j].draw_move(self._cells[i][j + 1])
+                if not self._solve_r(i, j + 1):
+                    self._cells[i][j].draw_move(self._cells[i][j + 1], True)
+                else:
+                    return True

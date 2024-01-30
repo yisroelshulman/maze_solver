@@ -22,9 +22,9 @@ class Tests(unittest.TestCase):
         num_rows = 30
         m1 = Maze(0, 0, num_rows, num_columns, 10)
         count_4_walls = 0
-        for i in range(num_rows):
-            for j in range(num_columns):
-                if m1._cells[i][j].has_top_wall and m1._cells[i][j].has_bottom_wall and m1._cells[i][j].has_left_wall and m1._cells[i][j].has_right_wall:
+        for row in m1._cells: 
+            for cell in row:
+                if cell.has_top_wall and cell.has_bottom_wall and cell.has_left_wall and cell.has_right_wall:
                     count_4_walls += 1
         self.assertEqual(count_4_walls, 0)
 
@@ -33,11 +33,9 @@ class Tests(unittest.TestCase):
         num_rows = 30
         m1 = Maze(0, 0, num_rows, num_columns, 10)
         count_visited = 0
-        for i in range(num_rows):
-            for j in range(num_columns):
-                if m1._cells[i][j].visited:
-                    count_visited += 1
-        self.assertEqual(count_visited, 0)
+        for row in m1._cells:
+            for cell in row:
+                self.assertEqual(cell.visited, False)
 
 if __name__ == "__main__":
     unittest.main()
