@@ -1,11 +1,19 @@
-from tkinter import Tk, BOTH, Canvas
 from cell import Cell
+from gui import Window
 import time
 import random
 
 
 class Maze:
-    def __init__(self, x, y, num_rows, num_columns, cell_size, win=None, seed=None):
+    def __init__(self,
+                 x: int,
+                 y: int,
+                 num_rows: int,
+                 num_columns: int,
+                 cell_size: float,
+                 win: Window=None,
+                 seed: int=None
+                 ) -> None:
         self._x = x
         self._y = y
         self._num_rows = num_rows
@@ -13,13 +21,15 @@ class Maze:
         self._cell_size = cell_size
         self._win = win
         random.seed(seed)
+        self._cells = []
         self._create_cells()
         self._break_entrance_and_exit()
         self._break_walls_r(0, 0)
         self._reset_cells_visited()
 
-    def _create_cells(self):
-        self._cells = []
+    # loops through twice even though it is slower so the computation for the cell walls can be
+    # done in its own method
+    def _create_cells(self) -> None:
         for i in range(self._num_rows):
             row = []
             for j in range(self._num_columns):
@@ -29,109 +39,125 @@ class Maze:
             for j in range(self._num_columns):
                 self._draw_cell(i, j)
 
-    def _draw_cell(self, i, j):
-        x1 = j * self._cell_size + self._x
-        x2 = (j + 1) * self._cell_size + self._x
-        y1 = i * self._cell_size + self._y
-        y2 = (i + 1) * self._cell_size + self._y
-        self._cells[i][j].draw_walls(x1, y1, x2, y2)
+    def _draw_cell(self, row: int, column: int) -> None:
+        x1 = column * self._cell_size + self._x
+        x2 = (column + 1) * self._cell_size + self._x
+        y1 = row * self._cell_size + self._y
+        y2 = (row + 1) * self._cell_size + self._y
+        self._cells[row][column].draw_walls(x1, y1, x2, y2)
         self._animate()
 
-    def _animate(self):
+    def _animate(self, delay: float=0.0125) -> None:
         if self._win is None:
             return
         self._win.redraw()
-        time.sleep(0.025)
+        time.sleep(delay)
 
-    def _break_entrance_and_exit(self):
-        start = self._cells[0][0]
-        start.has_top_wall = False
+    # breaks the top wall of the top-left corner cell (the start position)
+    # then breaks the bottom of the button-right corner cell (the end position)
+    def _break_entrance_and_exit(self) -> None:
+        self._cells[0][0].has_top_wall = False
         self._draw_cell(0, 0)
-        end = self._cells[len(self._cells) - 1][len(self._cells[0]) - 1]
-        end.has_bottom_wall = False
+        self._cells[len(self._cells) - 1][len(self._cells[0]) - 1].has_bottom_wall = False
         self._draw_cell(len(self._cells) - 1, len(self._cells[0]) - 1)
 
-    def _break_walls_r(self, i, j):
-        self._cells[i][j].visited = True
+    # builds the maze using a depth first approach
+    # we start at the top left cell mark it as visited
+    # compile a list of adjacent (up, down, left, right) unvisited cells
+    # if there are no unvisted cells to move to we are at the furthest depth on this path and return
+    # randomly choose a cell from the list, break the walls connecting the cells and move there
+    # mark the cell as visited and repeat (from compiling a list step)
+    def _break_walls_r(self, row: int, column: int) -> None:
+        self._cells[row][column].visited = True
+        # repeats until all adjacent cells where visited
         while True:
+            # compiling the list of the adjacent visitable cells
             visitable = []
-            if i - 1 >= 0 and not self._cells[i - 1][j].visited:
-                visitable.append('up')
-            if j - 1 >= 0 and not self._cells[i][j - 1].visited:
-                visitable.append('left')
-            if i + 1 < len(self._cells) and not self._cells[i + 1][j].visited:
-                visitable.append('down')
-            if j + 1 <  len(self._cells[0]) and not self._cells[i][j + 1].visited:
-                visitable.append('right')
-            if len(visitable) == 0:
-                self._draw_cell(i, j)
-                return
-            rand = random.randrange(0, len(visitable))
-            if visitable[rand] == 'up':
-                self._cells[i][j].has_top_wall = False
-                self._cells[i - 1][j].has_bottom_wall = False
-                self._break_walls_r(i - 1, j)
-            elif visitable[rand] == 'left':
-                self._cells[i][j].has_left_wall = False
-                self._cells[i][j - 1].has_right_wall = False
-                self._break_walls_r(i, j - 1)
-            elif visitable[rand] == 'down':
-                self._cells[i][j].has_bottom_wall = False
-                self._cells[i + 1][j].has_top_wall = False
-                self._break_walls_r(i + 1, j)
-            else:
-                self._cells[i][j].has_right_wall = False
-                self._cells[i][j + 1].has_left_wall = False
-                self._break_walls_r(i, j + 1)
+            if row > 0 and not self._cells[row - 1][column].visited:
+                visitable.append(('up', row - 1, column))
+            if column > 0 and not self._cells[row][column - 1].visited:
+                visitable.append(('left', row, column - 1))
+            if row + 1 < len(self._cells) and not self._cells[row + 1][column].visited:
+                visitable.append(('down', row + 1, column))
+            if column + 1 <  len(self._cells[0]) and not self._cells[row][column + 1].visited:
+                visitable.append(('right', row, column + 1))
 
-    def _reset_cells_visited(self):
+            # no visitable cells
+            if len(visitable) == 0:
+                return
+
+            # randomly select a cell break the walls between and move there
+            visit = visitable[random.randrange(0, len(visitable))]
+            if visit[0] == 'up':
+                self._cells[row][column].has_top_wall = False
+                self._cells[row - 1][column].has_bottom_wall = False
+            elif visit[0] == 'left':
+                self._cells[row][column].has_left_wall = False
+                self._cells[row][column - 1].has_right_wall = False
+            elif visit[0] == 'down':
+                self._cells[row][column].has_bottom_wall = False
+                self._cells[row + 1][column].has_top_wall = False
+            else:
+                self._cells[row][column].has_right_wall = False
+                self._cells[row][column + 1].has_left_wall = False
+            self._draw_cell(row, column)
+            self._break_walls_r(visit[1], visit[2])
+
+    def _reset_cells_visited(self) -> None:
         for i in range(self._num_rows):
             for j in range(self._num_columns):
                 self._cells[i][j].visited = False
 
-    def _solve(self):
+    def _solve(self) -> bool:
         random.seed(None)
         return self._solve_r(0, 0)
 
-    def _solve_r(self, i, j):
+    # solves the maze with a DFS algorithm
+    # creates a list of adjacent (up, down, left, right) cells from this cell, randomly moves to one
+    # and walks the path drawing a line until the end or there are no adjacent visitable cells.
+    # then we backtrack to the last cell with adjacent visitable cells and repeat graying out the
+    # drawn line. if the current cell is the end then we return True
+    def _solve_r(self, row: int, column: int) -> bool:
         self._animate()
-        self._cells[i][j].visited = True
-        if i == (self._num_rows - 1) and j == (self._num_columns - 1):
+        current = self._cells[row][column]
+        current.visited = True
+        if row == (self._num_rows - 1) and column == (self._num_columns - 1): # end cell
             return True
+        # repeats until all adjacent cells are visited
         while True:
-            visitable = []
-            if i - 1 >= 0 and not self._cells[i - 1][j].visited and not self._cells[i][j].has_top_wall:
+            visitable = [] # list of visitable adjacent cells
+            if row > 0 and not self._cells[row - 1][column].visited and not current.has_top_wall:
                 visitable.append('up')
-            if j - 1 >= 0 and not self._cells[i][j - 1].visited and not self._cells[i][j].has_left_wall:
+            if column > 0 and not self._cells[row][column - 1].visited and not current.has_left_wall:
                 visitable.append('left')
-            if i + 1 < len(self._cells) and not self._cells[i + 1][j].visited and not self._cells[i][j].has_bottom_wall:
+            if row + 1 < len(self._cells) and not self._cells[row + 1][column].visited and not current.has_bottom_wall:
                 visitable.append('down')
-            if j + 1 <  len(self._cells[0]) and not self._cells[i][j + 1].visited and not self._cells[i][j].has_right_wall:
+            if column + 1 <  len(self._cells[0]) and not self._cells[row][column + 1].visited and not current.has_right_wall:
                 visitable.append('right')
+
+            # no visitable adjacent cells
             if len(visitable) == 0:
                 return False
+
+            # randomly select a cell to move to
             rand = random.randrange(0, len(visitable))
             if visitable[rand] == 'up':
-                self._cells[i][j].draw_move(self._cells[i - 1][j])
-                if not self._solve_r(i - 1, j):
-                    self._cells[i][j].draw_move(self._cells[i - 1][j], True)
-                else:
+                current.draw_move(self._cells[row - 1][column])
+                if self._solve_r(row - 1, column):
                     return True
+                current.draw_move(self._cells[row - 1][column], True)
             elif visitable[rand] == 'left':
-                self._cells[i][j].draw_move(self._cells[i][j - 1])
-                if not self._solve_r(i, j - 1):
-                    self._cells[i][j].draw_move(self._cells[i][j - 1], True)
-                else:
+                current.draw_move(self._cells[row][column - 1])
+                if self._solve_r(row, column - 1):
                     return True
+                current.draw_move(self._cells[row][column - 1], True)
             elif visitable[rand] == 'down':
-                self._cells[i][j].draw_move(self._cells[i + 1][j])
-                if not self._solve_r(i + 1, j):
-                    self._cells[i][j].draw_move(self._cells[i + 1][j], True)
-                else:
+                current.draw_move(self._cells[row + 1][column])
+                if self._solve_r(row + 1, column):
                     return True
+                self._cells[row][column].draw_move(self._cells[row + 1][column], True)
             else:
-                self._cells[i][j].draw_move(self._cells[i][j + 1])
-                if not self._solve_r(i, j + 1):
-                    self._cells[i][j].draw_move(self._cells[i][j + 1], True)
-                else:
+                current.draw_move(self._cells[row][column + 1])
+                if self._solve_r(row, column + 1):
                     return True
+                current.draw_move(self._cells[row][column + 1], True)
