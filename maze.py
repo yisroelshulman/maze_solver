@@ -23,8 +23,8 @@ class Maze:
         random.seed(seed)
         self._cells = []
         self._create_cells()
-        self._break_entrance_and_exit()
-        self._break_walls_r(0, 0)
+        self._mark_start_and_end()
+        self._break_walls_r(self._start_row, self._start_column)
         self._reset_cells_visited()
 
     # loops through twice even though it is slower so the computation for the cell walls can be
@@ -55,11 +55,24 @@ class Maze:
 
     # breaks the top wall of the top-left corner cell (the start position)
     # then breaks the bottom of the button-right corner cell (the end position)
-    def _break_entrance_and_exit(self) -> None:
-        self._cells[0][0].has_top_wall = False
-        self._draw_cell(0, 0)
-        self._cells[len(self._cells) - 1][len(self._cells[0]) - 1].has_bottom_wall = False
-        self._draw_cell(len(self._cells) - 1, len(self._cells[0]) - 1)
+    def _mark_start_and_end(self) -> None:
+        self._start_row = self._start_column = None
+        self._end_row = self._end_column = None
+        while self._start_row == self._end_row and self._start_column == self._end_column:
+            self._start_row = random.randrange(0, self._num_rows)
+            self._start_column = random.randrange(0, self._num_columns)
+            self._end_row = random.randrange(0, self._num_rows)
+            self._end_column = random.randrange(0, self._num_columns)
+        self._start = self._cells[self._start_row][self._start_column]
+        self._end = self._cells[self._end_row][self._end_column]
+
+        # checking here because we need a start and end even if we are not drawing it
+        if self._win is None:
+            return
+        self._start.fill(self._win.canvas(), 'green')
+        self._draw_cell(self._start_row, self._start_column)
+        self._end.fill(self._win.canvas(), 'red')
+        self._draw_cell(self._end_row, self._end_column)
 
     # builds the maze using a depth first approach
     # we start at the top left cell mark it as visited
@@ -69,6 +82,11 @@ class Maze:
     # mark the cell as visited and repeat (from compiling a list step)
     def _break_walls_r(self, row: int, column: int) -> None:
         self._cells[row][column].visited = True
+
+        # only one way to reach the end
+        if self._cells[row][column] == self._end:
+            return
+
         # repeats until all adjacent cells where visited
         while True:
             # compiling the list of the adjacent visitable cells
@@ -110,7 +128,7 @@ class Maze:
 
     def _solve(self) -> bool:
         random.seed(None)
-        return self._solve_r(0, 0)
+        return self._solve_r(self._start_row, self._start_column)
 
     # solves the maze with a DFS algorithm
     # creates a list of adjacent (up, down, left, right) cells from this cell, randomly moves to one
@@ -121,7 +139,7 @@ class Maze:
         self._animate()
         current = self._cells[row][column]
         current.visited = True
-        if row == (self._num_rows - 1) and column == (self._num_columns - 1): # end cell
+        if current == self._end: 
             return True
         # repeats until all adjacent cells are visited
         while True:
