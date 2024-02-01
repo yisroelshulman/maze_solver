@@ -1,3 +1,4 @@
+from tkinter import Canvas, BOTH
 from gui import Line, Point, Window
 
 class Cell:
@@ -56,3 +57,7 @@ class Cell:
         if undo:
             color = 'white'
         self._win.draw_line(Line(self._center(), to_cell._center()), color)
+
+    def fill(self, canvas: Canvas, fill_color: str) -> None:
+        canvas.create_rectangle(self._x1 + 2, self._y1 + 2, self._x2 - 3, self._y2 - 3, fill=fill_color)
+        canvas.pack(fill=BOTH, expand=1)

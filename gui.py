@@ -40,3 +40,7 @@ class Window:
 
     def draw_line(self, line: Line, fill_color='black') -> None:
         line.draw(self.__canvas, fill_color)
+
+    # this is so the Cell can fill
+    def canvas(self) -> Canvas:
+        return self.__canvas
