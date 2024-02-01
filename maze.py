@@ -71,7 +71,7 @@ class Maze:
             return
         self._start.fill(self._win.canvas(), 'green')
         self._draw_cell(self._start_row, self._start_column)
-        self._end.fill(self._win.canvas(), 'red')
+        self._end.fill(self._win.canvas(), 'blue')
         self._draw_cell(self._end_row, self._end_column)
 
     # builds the maze using a depth first approach
