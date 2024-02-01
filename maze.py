@@ -45,9 +45,9 @@ class Maze:
         y1 = row * self._cell_size + self._y
         y2 = (row + 1) * self._cell_size + self._y
         self._cells[row][column].draw_walls(x1, y1, x2, y2)
-        self._animate()
+        self._animate(0.00625)
 
-    def _animate(self, delay: float=0.0125) -> None:
+    def _animate(self, delay: float) -> None:
         if self._win is None:
             return
         self._win.redraw()
@@ -136,7 +136,7 @@ class Maze:
     # then we backtrack to the last cell with adjacent visitable cells and repeat graying out the
     # drawn line. if the current cell is the end then we return True
     def _solve_r(self, row: int, column: int) -> bool:
-        self._animate()
+        self._animate(0.025)
         current = self._cells[row][column]
         current.visited = True
         if current == self._end: 
