@@ -1,11 +1,12 @@
-# Maze Solver
+# ** Maze Solver**
 
-The Boot.dev Maze Solver Project
+## Description
+My spin on the Boot.dev Maze Solver Project.\
 
-Description (What)
+
 "Why?" (Motivation/Goal/Problem to solve)
 
-![](https://github.com/yisroelshulman/maze_solver/blob/main/assets/maze.gif)
+![](https://github.com/yisroelshulman/assets/blob/main/maze_solver/maze.gif)
 
 
 Quick Start (how)
