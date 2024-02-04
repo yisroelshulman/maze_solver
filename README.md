@@ -15,7 +15,7 @@ The maze is generated as a grid of square cells based on the rows and columns va
 
 The path is generated using a depth first traversal approach knocking down the walls between cells as they are visited, ensuring that there is a valid solution to the maze.
 
-The solution is derived through a depth first search for the end cell, drawing a red line to the path and errasing it when back tracking. The RNG is reseeded so the attempt to solve can look different every time.
+The solution is derived through a depth first search for the end cell, drawing a red line to the path and erasing it when back tracking. The RNG is reseeded so the attempt to solve can look different every time.
 
 ![](https://github.com/yisroelshulman/assets/blob/main/maze_solver/maze.gif)
 
