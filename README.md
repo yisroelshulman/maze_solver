@@ -1,4 +1,4 @@
-# ** Maze Solver**
+# **Maze Solver**
 
 ## Description
 My spin on the Boot.dev Maze Solver Project.\
@@ -13,8 +13,9 @@ The maze is generated as a grid of square cells based on the rows and columns va
 > **_NOTE:_** The min size for a cell is 10 X 10 if the window size is not sufficient the solver will error and exit.
 
 
-The path is generated using a depth first search approach knocking down the walls between cells as they are visited. This ensures that there is a valid solution to the maze.\ \
-The maze is also solved through a depth first search where the RNG is reseeded to be different every iteration.
+The path is generated using a depth first traversal approach knocking down the walls between cells as they are visited, ensuring that there is a valid solution to the maze.\
+
+The solution is derived through a depth first search for the end cell drawing a red line to the path and errasing it when back tracking. The RNG is reseeded so the attempt to solve looks different every iteration.
 
 ![](https://github.com/yisroelshulman/assets/blob/main/maze_solver/maze.gif)
 
