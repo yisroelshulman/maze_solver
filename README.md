@@ -5,13 +5,14 @@ My spin on the Boot.dev Maze Solver Project.\
 Generates a random maze and then solves it.
 
 ### About
-The maze is generated as a grid of square cells based on the rows and columns variables from the user input. After the grid is complete a start (green) and end (blue) call are randomly selected using the initial seed for the RNG.\ \
+The maze is generated as a grid of square cells based on the rows and columns variables from the user input. After the grid is complete a start (green) and end (blue) call are randomly selected using the initial seed for the RNG.
 
 > **_NOTE:_** The max number of cells the maze can have is capped at 1,000. This is because the solver used a recursive depth first traversal in both the path generation and the solving, and by default the max recursion stack in python is capped at 1,000.
 
 
 > **_NOTE:_** The min size for a cell is 10 X 10 if the window size is not sufficient the solver will error and exit.
-\
+
+
 The path is generated using a depth first search approach knocking down the walls between cells as they are visited. This ensures that there is a valid solution to the maze.\ \
 The maze is also solved through a depth first search where the RNG is reseeded to be different every iteration.
 
@@ -33,7 +34,7 @@ Make sure that you have the correct python installation by checking
 ```
 python --version
 ```
-Uninstall the python environment, install tkinter, and reinstall the python environment.\ \
+Uninstall the python environment, install tkinter, and reinstall the python environment.
 
 Check out [Installing Tk][] for more help. If that is not sufficient, try searching the web with the error message to find a solution.
 
